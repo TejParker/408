@@ -94,6 +94,45 @@ void merge_list(LinkList &L1, LinkList &L2) {
     }
 
 }
+// 由于合并链表不改变头节点，所以不用传递引用
+void merge_list2(LinkList L1, LinkList L2) {
+    // 判空，
+    if (L1->next == NULL || L2->next == NULL) {
+        return;
+    }
+    LinkList l1 = L1->next;
+    LinkList l2 = L2->next;
+    // tail指向合并后链表的最后一个节点
+    LinkList tail = L1;
+    // p1 p2用来暂存下一个要合并的节点
+    LinkList p1, p2;
+    while (l1 != NULL && l2 != NULL) {
+        // 暂存下一个节点
+        p1 = l1->next;
+        p2 = l2->next;
+
+        // 合并逻辑
+        tail->next = l1;
+        l1->next = l2;
+        tail = l2;
+
+        // 下一个节点分别再赋给L1 , L2
+        l1 = p1;
+        l2 = p2;
+
+    }
+    while (p1 != NULL) {
+        tail->next = p1;
+        p1 = p1->next;
+    }
+    while (p2 != NULL) {
+        tail->next = p2;
+        p2 = p2->next;
+    }
+    // L2的头节点和第一个节点断开
+    L2->next = NULL;
+
+}
 int main() {
     LinkList L;
     list_tail_insert(L);
@@ -110,8 +149,11 @@ int main() {
     printf("Reversed List:\n");
     print_list(L2);
     // 合并两个链表
-    merge_list(L, L2);
+    merge_list2(L, L2);
     printf("Merged List:\n");
     print_list(L);
+    // 打印验证合并后L2的内容
+    printf("----------L2 After Merged--------");
+    print_list(L2);
     return 0;
 }
