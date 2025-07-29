@@ -1,21 +1,38 @@
 //
 // Created by 0527 on 2025/7/29.
 //
-#include<stdio.h>
-#include <stdlib.h>
+#include "function.h"
 
-typedef char BiElemType;
-typedef struct BiTNode {
-    BiElemType data;
-    struct BiTNode *lc;
-    struct BiTNode *rc;
-}BiTNode, *BiTree;
+void InitQueue(LinkQueue &Q) {
+    Q.front = Q.rear = (LinkNode*)malloc(sizeof(LinkNode));
+}
 
-// tag结构体是辅助队列使用的，用来建队
-typedef struct Tag {
-    BiTree p;//树某个节点的地址
-    struct Tag *next;
-}tag_t, *ptag_t;
+bool IsEmpty(LinkQueue Q) {
+    return Q.front == Q.rear;
+}
+
+void EnQueue(LinkQueue &Q, ElemType e) {
+    LinkNode *pnew = (LinkNode*)malloc(sizeof(LinkNode));
+    pnew->data = e;
+    pnew->next = NULL;
+    Q.rear->next = pnew;
+    Q.rear = pnew;
+}
+
+bool DeQueue(LinkQueue &Q, ElemType &e) {
+    if (Q.front == Q.rear) {
+        return false;
+    }
+    LinkNode *p = Q.front->next;//拿到第一个节点，存取p
+    e = p->data;//获取出队的元素值
+    Q.front->next = p->next;//队头断链
+    // 队中只有一个元素时，出队后，队尾要指向队头
+    if (Q.rear == p) {
+        Q.rear = Q.front;
+    }
+    free(p);
+    return true;
+}
 
 // 前序遍历也叫：深度优先遍历
 void PreOrder(BiTree p) {
@@ -44,6 +61,25 @@ void PostOrder(BiTree p) {
     PostOrder(p->lc);
     PostOrder(p->rc);
     printf("%c",p->data);
+}
+
+void LevelOrder(BiTree T) {
+    LinkQueue Q;
+    InitQueue(Q);
+    BiTree p;
+    EnQueue(Q, T);//树根入队
+    while (!IsEmpty(Q)) {
+        DeQueue(Q, p);// 出队当前节点并打印
+        printf("%c",p->data);
+        if (p->lc != NULL) {
+            //入队左孩子
+            EnQueue(Q, p->lc);
+        }
+        if (p->rc != NULL) {
+            // 入队右孩子
+            EnQueue(Q, p->rc);
+        }
+    }
 }
 
 int main() {
@@ -86,6 +122,9 @@ int main() {
     printf("\n");
     printf("----------- Post Order --------------\n");
     PostOrder(tree);
+    printf("\n");
+    printf("----------- Level Order --------------\n");
+    LevelOrder(tree);
     return 0;
 }
 
