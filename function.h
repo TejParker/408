@@ -13,7 +13,7 @@ typedef struct BiTNode {
     struct BiTNode *rc;
 }BiTNode, *BiTree;
 
-// tag结构体是辅助队列使用的，用来建队
+// tag结构体是辅助队列使用的，用来建树
 typedef struct Tag {
     BiTree p;//树某个节点的地址
     struct Tag *next;
